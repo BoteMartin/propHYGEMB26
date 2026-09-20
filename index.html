@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Hygée & Embryolisse x BOTE</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap">
+<style>
+    :root {
+        --bg: #0B0B0F;
+        --surface: #141418;
+        --surface-2: #1A1A20;
+        --border: #222228;
+        --text: #EAEAEE;
+        --text-sec: #9A9AA2;
+        --text-mute: #6A6A74;
+        --gold: #C8A96E;
+        --gold-soft: #D4B77E;
+        --gold-dim: rgba(200,169,110,0.12);
+        --gold-border: rgba(200,169,110,0.25);
+        --r: 10px;
+        --ease: cubic-bezier(0.16,1,0.3,1);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    ::selection{background:rgba(200,169,110,0.3);color:var(--text)}
+    html,body{height:100%;overflow:hidden}
+
+    body{
+        font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+        background:var(--bg);
+        background-image:radial-gradient(ellipse at 50% 0%,rgba(200,169,110,0.04) 0%,transparent 50%);
+        color:var(--text);
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+        font-variant-numeric:tabular-nums;
+    }
+
+    .progress{
+        position:fixed;top:0;left:0;height:2px;
+        background:var(--gold);
+        box-shadow:0 0 12px rgba(200,169,110,0.3);
+        transition:width 0.5s var(--ease);z-index:200;
+    }
+
+    .brand{
+        position:fixed;top:2rem;right:3rem;
+        font-size:0.65rem;font-weight:600;letter-spacing:0.2em;
+        color:var(--text-mute);z-index:100;
+    }
+
+    .deck{position:relative;width:100%;height:100%}
+
+    .slide{
+        position:absolute;inset:0;
+        display:flex;justify-content:center;
+        padding:4.5rem 4rem 6rem;
+        overflow-y:auto;
+        opacity:0;pointer-events:none;transition:opacity 0.4s ease;
+    }
+    .slide.active{opacity:1;pointer-events:auto}
+    .slide-inner{width:100%;max-width:900px;margin:auto 0}
+
+    @media(prefers-reduced-motion:reduce){
+        .slide,.progress,.accent-bar{transition:none!important}
+    }
+
+    .tc{text-align:center}
+    .title-main{
+        font-size:clamp(2.2rem,6vw,4rem);
+        font-weight:200;letter-spacing:-0.04em;line-height:1.08;
+        text-wrap:balance;
+    }
+    .title-main span{font-weight:500}
+    .accent-bar{
+        width:0;height:2px;background:var(--gold);margin:2rem auto;
+        transition:width 0.9s var(--ease) 0.25s;
+    }
+    .slide.active .accent-bar{width:60px}
+    .title-sub{
+        font-size:clamp(0.75rem,1.5vw,0.95rem);
+        font-weight:400;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-sec);
+    }
+    .title-period{
+        margin-top:1.5rem;font-size:0.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+    }
+
+    .tag{font-size:0.65rem;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem}
+    .heading{font-size:clamp(1.6rem,3.6vw,2.4rem);font-weight:300;letter-spacing:-0.03em;line-height:1.15;margin-bottom:0.9rem;text-wrap:balance}
+    .heading strong{font-weight:600}
+    .desc{font-size:0.92rem;line-height:1.7;color:var(--text-sec);max-width:660px}
+    .desc strong{color:var(--text);font-weight:600}
+    .note{font-size:0.78rem;line-height:1.6;color:var(--text-mute);margin-top:1rem;max-width:700px}
+    .note strong{color:var(--text-sec);font-weight:600}
+
+    /* Info card rows */
+    .ic{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:1.4rem}
+    .ic-h{
+        padding:.8rem 1.5rem;border-bottom:1px solid var(--border);
+        font-size:0.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+        background:var(--surface-2);
+    }
+    .ir{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid var(--border);gap:1rem}
+    .ir:last-child{border-bottom:none}
+    .ir-l{font-size:0.88rem;font-weight:500;color:var(--text);flex:1}
+    .ir-sub{font-size:0.74rem;color:var(--text-mute);margin-top:.2rem;font-weight:400;line-height:1.5}
+    .ir-v{font-size:0.9rem;font-weight:600;white-space:nowrap;color:var(--text-sec)}
+    .ir.hl{background:var(--gold-dim)}
+    .ir.hl .ir-l,.ir.hl .ir-v{color:var(--gold);font-weight:700}
+
+    /* Cards 3 colonnes */
+    .disp-grid{
+        margin-top:1.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;align-items:stretch;
+    }
+    .disp-grid.two{grid-template-columns:repeat(2,1fr)}
+    .disp-card{
+        background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+        padding:1.4rem 1.3rem;
+        display:flex;flex-direction:column;
+    }
+    .disp-card.gold{background:var(--gold-dim);border-color:var(--gold-border)}
+    .disp-k{
+        font-size:0.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+        color:var(--text-mute);margin-bottom:.5rem;
+    }
+    .disp-card.gold .disp-k{color:var(--gold)}
+    .disp-n{
+        font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:1rem;
+        letter-spacing:-0.01em;line-height:1.25;
+        padding-bottom:.8rem;border-bottom:1px solid var(--border);
+    }
+    .disp-card.gold .disp-n{border-bottom-color:var(--gold-border)}
+    .disp-big{font-size:2.2rem;font-weight:700;color:var(--gold);letter-spacing:-0.04em;line-height:1;margin-bottom:.35rem}
+    .disp-l{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+    .disp-l li{
+        font-size:0.84rem;color:var(--text-sec);padding-left:1rem;position:relative;line-height:1.45;
+    }
+    .disp-l li strong{color:var(--text);font-weight:600}
+    .disp-l li::before{
+        content:'';position:absolute;left:0;top:.55rem;
+        width:4px;height:4px;border-radius:50%;background:var(--gold);
+    }
+
+    /* Tranches */
+    .tranches{
+        margin-top:1.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;
+    }
+    .tr-card{
+        background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:var(--r);
+        padding:1.4rem 1.25rem;text-align:center;
+    }
+    .tr-t{font-size:0.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+    .tr-range{font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:.9rem}
+    .tr-price{font-size:1.8rem;font-weight:700;color:var(--gold)}
+    .tr-unit{font-size:0.7rem;color:var(--text-mute);margin-top:.2rem}
+    .tr-old{font-size:0.74rem;color:var(--text-mute);margin-top:.7rem}
+    .tr-old s{color:var(--text-sec)}
+
+    .calcul{
+        margin-top:1.1rem;padding:1rem 1.5rem;
+        background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+        display:flex;justify-content:space-between;align-items:center;gap:1rem;
+    }
+    .calcul-l{font-size:0.85rem;color:var(--text-sec);line-height:1.5}
+    .calcul-l strong{color:var(--text);font-weight:600}
+    .calcul-v{font-size:1.05rem;font-weight:700;color:var(--gold);white-space:nowrap}
+
+    /* Recap */
+    .recap{margin-top:1.25rem;display:flex;flex-direction:column;gap:.65rem}
+    .recap-item{
+        background:var(--surface);border:1px solid var(--border);
+        border-radius:var(--r);padding:1.05rem 1.5rem;
+        display:flex;justify-content:space-between;align-items:center;gap:1rem;
+    }
+    .recap-left{flex:1}
+    .recap-label{font-size:0.88rem;font-weight:600;color:var(--text)}
+    .recap-sub{font-size:0.74rem;color:var(--text-mute);margin-top:.15rem;line-height:1.5}
+    .recap-amt{font-size:1.05rem;font-weight:700;color:var(--text);white-space:nowrap}
+    .recap-total{
+        background:var(--gold-dim);border:1px solid var(--gold-border);
+        border-radius:var(--r);padding:1.2rem 1.5rem;
+        display:flex;justify-content:space-between;align-items:center;gap:1rem;
+    }
+    .recap-total-label{
+        font-size:0.7rem;font-weight:700;letter-spacing:0.18em;
+        text-transform:uppercase;color:var(--gold);
+    }
+    .recap-total-amt{font-size:1.4rem;font-weight:700;color:var(--gold);white-space:nowrap}
+
+    /* Nav */
+    .nav{
+        position:fixed;bottom:calc(1.6rem + env(safe-area-inset-bottom, 0px));left:50%;transform:translateX(-50%);
+        display:flex;align-items:center;gap:.75rem;z-index:100;
+        background:rgba(11,11,15,0.85);padding:.4rem .6rem;border-radius:100px;
+    }
+    .nav-btn{
+        width:2.25rem;height:2.25rem;border:1px solid var(--border);
+        border-radius:50%;background:var(--surface);color:var(--text-sec);
+        cursor:pointer;display:flex;align-items:center;justify-content:center;
+        font-size:0.85rem;transition:all .25s ease;-webkit-tap-highlight-color:transparent;
+        font-family:inherit;
+    }
+    .nav-btn:hover,.nav-btn:focus-visible{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);outline:none}
+    .dots{display:flex;gap:.4rem}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .3s ease;border:0;padding:0}
+    .dot:focus-visible{outline:1px solid var(--gold);outline-offset:2px}
+    .dot.on{background:var(--gold);transform:scale(1.35);box-shadow:0 0 8px rgba(200,169,110,0.35)}
+
+    .counter{
+        position:fixed;bottom:2.25rem;right:3rem;
+        font-size:0.7rem;font-weight:500;letter-spacing:.08em;color:var(--text-mute);z-index:100;
+    }
+    .counter .c{color:var(--text-sec);font-weight:600}
+
+    @media(max-width:900px){
+        .slide{padding:4rem 2.5rem 5.5rem}
+        .brand{top:1.5rem;right:2rem}
+        .disp-grid,.disp-grid.two{grid-template-columns:1fr;gap:.7rem}
+    }
+
+    @media(max-width:680px){
+        .slide{padding:3rem 1.25rem 5rem}
+        .brand{top:1.25rem;right:1.5rem;font-size:.6rem}
+        .heading{font-size:1.45rem;margin-bottom:.7rem}
+        .desc{font-size:.85rem}
+        .counter{display:none}
+        .ir{padding:.9rem 1.1rem}
+        .ic-h{padding:.7rem 1.1rem}
+        .recap-item,.recap-total{padding:1rem 1.15rem}
+        .tranches{grid-template-columns:1fr;gap:.6rem}
+        .tr-card{padding:1rem}
+        .calcul{padding:.9rem 1.15rem}
+    }
+
+    @media(max-width:440px){
+        .title-main{font-size:1.9rem}
+        .brand{display:none}
+        .ir{flex-direction:column;align-items:flex-start;gap:.3rem}
+        .ir-v{align-self:flex-end;white-space:normal;text-align:right}
+        .recap-item,.recap-total,.calcul{flex-direction:column;align-items:flex-start;gap:.4rem}
+    }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress" style="width:10%"></div>
+<div class="brand">BOTE.</div>
+
+<div class="deck">
+
+    <!-- 1. Titre -->
+    <section class="slide active">
+        <div class="slide-inner tc">
+            <h1 class="title-main">HYGÉE &amp; EMBRYOLISSE <span>x</span> BOTE</h1>
+            <div class="accent-bar"></div>
+            <div class="title-sub">Proposition de collaboration 2026 / 2028</div>
+            <div class="title-period">Valable jusqu'au 16 octobre 2026</div>
+        </div>
+    </section>
+
+    <!-- 2. Ce qui a changé -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">Depuis 2024</div>
+            <h2 class="heading">Ce qui a changé <strong>chez BOTE</strong></h2>
+            <p class="desc">Les contrats Hygée et Embryolisse n'ont pas bougé depuis le démarrage. L'accompagnement, lui, n'a plus grand-chose à voir : la base Hygée est passée de 3 000 à plus de 120 000 contacts, et l'agence s'est structurée autour.</p>
+            <div class="disp-grid">
+                <div class="disp-card">
+                    <div class="disp-n">Une équipe plus large</div>
+                    <ul class="disp-l">
+                        <li>Deux stratèges sur chaque compte</li>
+                        <li>Un retention lead dédié par marque</li>
+                        <li>Un profil technique Klaviyo : branchements, API, WhatsApp, n8n</li>
+                        <li>Deux designers, deux intégrateurs</li>
+                    </ul>
+                </div>
+                <div class="disp-card">
+                    <div class="disp-n">Des process cadrés</div>
+                    <ul class="disp-l">
+                        <li>Temps forts pilotés de bout en bout, avec call hebdo en période de run</li>
+                        <li>Deux propositions par temps fort : core (sans devis) et stretch</li>
+                        <li>Nouvelle DA déployée sur les deux marques</li>
+                    </ul>
+                </div>
+                <div class="disp-card">
+                    <div class="disp-n">De la data incluse</div>
+                    <ul class="disp-l">
+                        <li>Hiro Analytics : performance, cohortes, pacing en temps réel</li>
+                        <li>Monthly structuré : observation, hypothèse, recommandation</li>
+                        <li>Forecast et objectifs trimestriels à partir de 2027</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Équipe -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">L'équipe</div>
+            <h2 class="heading">Qui travaille sur <strong>vos comptes</strong></h2>
+            <div class="ic">
+                <div class="ir">
+                    <div class="ir-l">Stratégie<div class="ir-sub">Plans mensuels, temps forts, segmentation, architecture des flows</div></div>
+                    <span class="ir-v">Martin + Ulrick</span>
+                </div>
+                <div class="ir">
+                    <div class="ir-l">Retention lead<div class="ir-sub">Votre interlocuteur au quotidien, responsable de la relation et des objectifs</div></div>
+                    <span class="ir-v">Martin (Hygée) · Adrien (Embryolisse)</span>
+                </div>
+                <div class="ir">
+                    <div class="ir-l">Project management<div class="ir-sub">Planning, suivi du scope et des crédits, coordination de la production</div></div>
+                    <span class="ir-v">Élodie</span>
+                </div>
+                <div class="ir">
+                    <div class="ir-l">Production<div class="ir-sub">Copy, design, intégration Klaviyo, QA sur chaque email</div></div>
+                    <span class="ir-v">1 copywriter · 2 designers · 2 intégrateurs</span>
+                </div>
+                <div class="ir">
+                    <div class="ir-l">Technique Klaviyo<div class="ir-sub">Flows complexes, blocs dynamiques, API, WhatsApp, automatisations n8n</div></div>
+                    <span class="ir-v">1 spécialiste</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Le cadre -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">Le cadre proposé</div>
+            <h2 class="heading">Un périmètre <strong>clair</strong>, par marque et par mois</h2>
+            <p class="desc">C'est le cadre de tous nos clients signés en 2026. Vous savez ce qui est inclus, ce qu'une demande coûte, et nous savons dire oui sans arbitrer contre une newsletter.</p>
+            <div class="disp-grid">
+                <div class="disp-card gold">
+                    <div class="disp-big">20</div>
+                    <div class="disp-n">livrables par mois</div>
+                    <ul class="disp-l">
+                        <li>Newsletters, emails de flow, popups</li>
+                        <li>Pipeline complet : brief, copy, design, intégration, QA</li>
+                        <li>2 rounds de retours inclus par livrable</li>
+                    </ul>
+                </div>
+                <div class="disp-card gold">
+                    <div class="disp-big">10</div>
+                    <div class="disp-n">crédits hors scope par mois</div>
+                    <ul class="disp-l">
+                        <li>Last minute, intégrations, calls supplémentaires (weekly BFCM compris), WhatsApp</li>
+                        <li>Coût annoncé avant de produire, vous validez ou non</li>
+                        <li>Valeur 1 000 € HT par mois</li>
+                    </ul>
+                </div>
+                <div class="disp-card">
+                    <div class="disp-k">Toujours inclus</div>
+                    <div class="disp-n">Stratégie et suivi</div>
+                    <ul class="disp-l">
+                        <li>Calendrier éditorial mensuel</li>
+                        <li>Monthly report et call mensuel</li>
+                        <li>Segmentation et délivrabilité</li>
+                        <li>Maintenance des flows existants</li>
+                        <li>Accès Hiro Analytics</li>
+                        <li>Ajustements de moins de 15 min</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 6. Tarifs -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">Devis</div>
+            <h2 class="heading">Retainer <strong>fixe</strong>, fin des paliers</h2>
+            <p class="desc">Le tarif ne dépend plus du chiffre d'affaires attribué à Klaviyo. Même montant chaque mois, BFCM compris. Notre tarif 2026 pour ce périmètre est de 5 000 € HT par marque.</p>
+            <div class="ic">
+                <div class="ic-h">Embryolisse</div>
+                <div class="ir hl">
+                    <div class="ir-l">À partir du 1er novembre 2026</div>
+                    <span class="ir-v">4 500 € HT / mois</span>
+                </div>
+            </div>
+            <div class="ic">
+                <div class="ic-h">Hygée</div>
+                <div class="ir">
+                    <div class="ir-l">Du 1er novembre au 31 décembre 2026<div class="ir-sub">Palier de transition, même périmètre : 20 livrables + 10 crédits</div></div>
+                    <span class="ir-v">4 000 € HT / mois</span>
+                </div>
+                <div class="ir hl">
+                    <div class="ir-l">À partir du 1er janvier 2027</div>
+                    <span class="ir-v">4 500 € HT / mois</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Q4 et temps forts -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">Q4 et temps forts</div>
+            <h2 class="heading">Votre grille temps forts <strong>ne bouge pas</strong></h2>
+            <p class="desc">Nos temps forts se facturent aujourd'hui 250 / 200 / 150 € HT l'unité. Vous gardez la grille historique, BFCM 2026 inclus.</p>
+            <div class="tranches">
+                <div class="tr-card">
+                    <div class="tr-t">Tranche 1</div>
+                    <div class="tr-range">0 à 10 unités</div>
+                    <div class="tr-price">200 €</div>
+                    <div class="tr-unit">par unité HT</div>
+                    <div class="tr-old">Grille 2026 : <s>250 €</s></div>
+                </div>
+                <div class="tr-card">
+                    <div class="tr-t">Tranche 2</div>
+                    <div class="tr-range">10 à 20 unités</div>
+                    <div class="tr-price">150 €</div>
+                    <div class="tr-unit">par unité HT</div>
+                    <div class="tr-old">Grille 2026 : <s>200 €</s></div>
+                </div>
+                <div class="tr-card">
+                    <div class="tr-t">Tranche 3</div>
+                    <div class="tr-range">20 unités et plus</div>
+                    <div class="tr-price">125 €</div>
+                    <div class="tr-unit">par unité HT</div>
+                    <div class="tr-old">Grille 2026 : <s>150 €</s></div>
+                </div>
+            </div>
+            <div class="calcul">
+                <span class="calcul-l"><strong>Temps fort de 20 unités</strong> : 3 500 € HT avec votre grille, 4 500 € HT avec la grille 2026</span>
+                <span class="calcul-v">1 000 € HT d'écart</span>
+            </div>
+            <div class="calcul">
+                <span class="calcul-l"><strong>Retainer de novembre</strong> : avec les paliers actuels, un mois à 350 000 € attribués donne 5 000 € HT chez Hygée, et 5 500 € HT à 480 000 € chez Embryolisse</span>
+                <span class="calcul-v">4 000 et 4 500 € HT fixes</span>
+            </div>
+            <p class="note">Les devis BFCM des deux marques suivent séparément, dès que les stratégies sont validées, en deux versions : core et stretch.</p>
+        </div>
+    </section>
+
+    <!-- 8. Engagement -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">Engagement</div>
+            <h2 class="heading">Deux façons de <strong>signer</strong></h2>
+            <p class="desc">Les tarifs sont identiques dans les deux cas. L'engagement vous donne de la visibilité : rien ne bouge pendant deux ans.</p>
+            <div class="disp-grid two">
+                <div class="disp-card">
+                    <div class="disp-k">Option 1</div>
+                    <div class="disp-n">Sans engagement</div>
+                    <ul class="disp-l">
+                        <li>Résiliation à tout moment, <strong>préavis de 30 jours</strong></li>
+                        <li>Retainer indexé chaque année sur l'inflation (IPC INSEE), à date anniversaire</li>
+                        <li>Grille temps forts historique garantie <strong>12 mois</strong>, jusqu'au 31 octobre 2027</li>
+                    </ul>
+                </div>
+                <div class="disp-card gold">
+                    <div class="disp-k">Option 2</div>
+                    <div class="disp-n">Engagement 12 mois</div>
+                    <ul class="disp-l">
+                        <li>Engagement jusqu'au 31 octobre 2027, puis préavis de 30 jours</li>
+                        <li>Retainer <strong>gelé 24 mois</strong>, sans indexation, jusqu'au 31 octobre 2028</li>
+                        <li>Grille temps forts historique <strong>gelée 24 mois</strong> également</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Performance -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">Performance</div>
+            <h2 class="heading">Des objectifs posés <strong>ensemble</strong>, chaque trimestre</h2>
+            <p class="desc">Les paliers rémunéraient surtout les pics de temps forts. On les remplace par un pilotage qui engage l'équipe toute l'année, à partir du T1 2027.</p>
+            <div class="disp-grid">
+                <div class="disp-card">
+                    <div class="disp-n">Objectifs trimestriels</div>
+                    <ul class="disp-l">
+                        <li>CA repeat, cross-sell, croissance de base</li>
+                        <li>Trois niveaux : bas, médian, haut</li>
+                        <li>Fixés avec vous en début de trimestre</li>
+                    </ul>
+                </div>
+                <div class="disp-card">
+                    <div class="disp-n">Forecast mensuel</div>
+                    <ul class="disp-l">
+                        <li>Déclinaison de l'objectif mois par mois</li>
+                        <li>Suivi du réel contre la cible dans Hiro</li>
+                        <li>Alerte de notre part si on décroche</li>
+                    </ul>
+                </div>
+                <div class="disp-card">
+                    <div class="disp-n">Plan de rattrapage</div>
+                    <ul class="disp-l">
+                        <li>Campagne additionnelle déclenchée si l'objectif mensuel est menacé</li>
+                        <li>Prise sur les livrables ou les crédits du mois</li>
+                        <li>Bilan au monthly suivant</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Autres marques -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">Le groupe</div>
+            <h2 class="heading">Et les <strong>autres marques</strong> ?</h2>
+            <p class="desc">Cette proposition porte sur Hygée et Embryolisse. Pour le reste du groupe, on avance au rythme des marques, et on en rediscute le moment venu, sans problème.</p>
+            <div class="disp-grid">
+                <div class="disp-card">
+                    <div class="disp-n">Althé</div>
+                    <ul class="disp-l">
+                        <li>Accompagnée aujourd'hui en missions ponctuelles avec nos équipes</li>
+                        <li>Ça continue tel quel tant que la marque n'a pas la taille d'un accompagnement complet</li>
+                    </ul>
+                </div>
+                <div class="disp-card">
+                    <div class="disp-n">Hygée US</div>
+                    <ul class="disp-l">
+                        <li>Lancement prévu en janvier 2027</li>
+                        <li>On peut démarrer par des besoins ponctuels : flows de base, emails de lancement</li>
+                    </ul>
+                </div>
+                <div class="disp-card">
+                    <div class="disp-n">Quand une marque grandit</div>
+                    <ul class="disp-l">
+                        <li>On se pose ensemble à ce moment-là pour trouver le bon format</li>
+                        <li>Avec plusieurs marques d'un même groupe chez nous, la discussion est ouverte</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. Récap -->
+    <section class="slide">
+        <div class="slide-inner">
+            <div class="tag">Récapitulatif</div>
+            <h2 class="heading">L'offre en <strong>résumé</strong></h2>
+            <div class="recap">
+                <div class="recap-item">
+                    <div class="recap-left">
+                        <div class="recap-label">Embryolisse</div>
+                        <div class="recap-sub">20 livrables + 10 crédits par mois · tarif fixe dès le 1er novembre 2026</div>
+                    </div>
+                    <div class="recap-amt">4 500 € HT / mois</div>
+                </div>
+                <div class="recap-item">
+                    <div class="recap-left">
+                        <div class="recap-label">Hygée</div>
+                        <div class="recap-sub">20 livrables + 10 crédits par mois · 4 000 € HT en novembre et décembre 2026</div>
+                    </div>
+                    <div class="recap-amt">4 500 € HT / mois</div>
+                </div>
+                <div class="recap-item">
+                    <div class="recap-left">
+                        <div class="recap-label">Temps forts</div>
+                        <div class="recap-sub">Grille historique maintenue, garantie 12 ou 24 mois selon l'option</div>
+                    </div>
+                    <div class="recap-amt">200 / 150 / 125 € HT</div>
+                </div>
+                <div class="recap-total">
+                    <span class="recap-total-label">Total mensuel HT, deux marques, dès janvier 2027</span>
+                    <span class="recap-total-amt">9 000 €</span>
+                </div>
+            </div>
+            <p class="note"><strong>Prochaines étapes.</strong> Vous choisissez l'option 1 ou 2 avant le 16 octobre. Nous envoyons deux contrats PandaDoc, un par marque, pour une prise d'effet au 1er novembre 2026.</p>
+        </div>
+    </section>
+
+</div>
+
+<div class="nav">
+    <button class="nav-btn" id="prev" type="button" aria-label="Précédent">←</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="next" type="button" aria-label="Suivant">→</button>
+</div>
+<div class="counter"><span class="c" id="cur">01</span> / <span id="tot">10</span></div>
+
+<script>
+    (function(){
+        var slides=document.querySelectorAll('.slide'),N=slides.length,i=0;
+        var dotsEl=document.getElementById('dots');
+        for(var d=0;d<N;d++){
+            (function(n){
+                var dot=document.createElement('button');
+                dot.type='button';dot.id='dot-'+n;
+                dot.className='dot'+(n===0?' on':'');
+                dot.setAttribute('aria-label','Slide '+(n+1));
+                dot.addEventListener('click',function(){jump(n)});
+                dotsEl.appendChild(dot);
+            })(d);
+        }
+        function update(){
+            slides.forEach(function(s,idx){s.classList.toggle('active',idx===i)});
+            dotsEl.querySelectorAll('.dot').forEach(function(el,idx){el.classList.toggle('on',idx===i)});
+            document.getElementById('cur').textContent=String(i+1).padStart(2,'0');
+            document.getElementById('tot').textContent=String(N).padStart(2,'0');
+            document.getElementById('progress').style.width=((i+1)/N*100)+'%';
+        }
+        function go(dir){i=Math.max(0,Math.min(N-1,i+dir));update()}
+        function jump(idx){i=idx;update()}
+        document.getElementById('prev').addEventListener('click',function(){go(-1)});
+        document.getElementById('next').addEventListener('click',function(){go(1)});
+        document.addEventListener('keydown',function(e){
+            if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(1)}
+            else if(e.key==='ArrowLeft'){e.preventDefault();go(-1)}
+            else if(e.key==='Escape'){jump(0)}
+        });
+        var tx=0;
+        document.addEventListener('touchstart',function(e){tx=e.changedTouches[0].screenX},{passive:true});
+        document.addEventListener('touchend',function(e){
+            var dx=e.changedTouches[0].screenX-tx;
+            if(dx<-50)go(1);else if(dx>50)go(-1);
+        });
+        update();
+    })();
+</script>
+
+</body>
+</html>
